@@ -5,6 +5,12 @@ tracks the Cloud Certainty Hub release it deploys by default: module version
 `X.Y.Z` deploys Hub `X.Y.Z` unless you set `hub_version`. Release candidates
 follow the same rule (module `0.1.0-rc.11` deploys Hub `0.1.0-rc.11`).
 
+## 0.1.0-rc.12
+
+- Deploys Cloud Certainty Hub 0.1.0-rc.12 by default: a sign-in page in the Hub's own style and a
+  Stay informed section for product update and newsletter emails
+  (https://cloudcertainty.com/hub/releases/0.1.0-rc.12/). No new inputs or outputs.
+
 ## 0.1.0-rc.11
 
 - First release: deploys Cloud Certainty Hub 0.1.0-rc.11 by default (`hub_version`) into your
