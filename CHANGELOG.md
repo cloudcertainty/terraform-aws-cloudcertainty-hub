@@ -5,6 +5,13 @@ tracks the Cloud Certainty Hub release it deploys by default: module version
 `X.Y.Z` deploys Hub `X.Y.Z` unless you set `hub_version`. Release candidates
 follow the same rule (module `0.1.0-rc.11` deploys Hub `0.1.0-rc.11`).
 
+## 0.1.0-rc.13
+
+- Deploys Cloud Certainty Hub 0.1.0-rc.13 by default: the Hub checks the AWS Marketplace
+  subscription before installing a product that needs one, and explains how to recover from a
+  failed first install (https://cloudcertainty.com/hub/releases/0.1.0-rc.13/). No new inputs or
+  outputs.
+
 ## 0.1.0-rc.12
 
 - Deploys Cloud Certainty Hub 0.1.0-rc.12 by default: a sign-in page in the Hub's own style and a
