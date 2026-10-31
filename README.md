@@ -30,7 +30,7 @@ No AWS Marketplace subscription is needed for the Hub itself. Each product you i
 ```hcl
 module "hub" {
   source  = "cloudcertainty/cloudcertainty-hub/aws"
-  version = "0.1.0-rc.14"
+  version = "0.1.0-rc.15"
 
   identity_provider     = "IAMIdentityCenter"
   bootstrap_admin_email = "it-admin@acme.com"
@@ -47,7 +47,7 @@ output "portal_url" {
 }
 ```
 
-**Release candidates need an exact version.** Terraform only selects a pre-release such as `0.1.0-rc.14` when `version` names it exactly (`version = "0.1.0-rc.14"`); a range such as `~> 0.1` never matches it. Once a final release is out, `version = "~> 0.1.0"` or an exact version both work.
+**Release candidates need an exact version.** Terraform only selects a pre-release such as `0.1.0-rc.15` when `version` names it exactly (`version = "0.1.0-rc.15"`); a range such as `~> 0.1` never matches it. Once a final release is out, `version = "~> 0.1.0"` or an exact version both work.
 
 Open `portal_url` and sign in as `bootstrap_admin_email`.
 
@@ -82,7 +82,7 @@ data "aws_secretsmanager_secret" "oidc" {
 
 module "hub" {
   source  = "cloudcertainty/cloudcertainty-hub/aws"
-  version = "0.1.0-rc.14"
+  version = "0.1.0-rc.15"
   # ...
   identity_provider      = "OIDC"
   oidc_issuer            = "https://login.microsoftonline.com/<tenant-id>/v2.0"
@@ -103,7 +103,7 @@ Products installed through the Hub can sign their users in through it: the Hub f
 
 ### Installing products, or exporting them only
 
-With `deploy_mode = "Full"` (the default) the Hub installs and updates products with its own deployer role (the `deployer_role_arn` output), and only manages product stacks whose names start with `stack_name_prefix` (default `cc-`). `stack_name` must not start with that prefix, so the Hub never manages its own stack. With `deploy_mode = "ExportOnly"` no deployer role is created: the Hub only exports each install as Terraform or CloudFormation for you to run.
+With `deploy_mode = "Full"` (the default) the Hub installs and updates products with its own deployer role (the `deployer_role_arn` output), and only manages product stacks whose names start with `stack_name_prefix` (default `cc-`). `stack_name` must not start with that prefix, so the Hub never manages its own stack. To let the Hub adopt product stacks created outside it with other names, list them in `adoptable_stacks` (IAM then allows the Hub on those names too). With `deploy_mode = "ExportOnly"` no deployer role is created: the Hub only exports each install as Terraform or CloudFormation for you to run.
 
 ## Examples
 
@@ -128,11 +128,12 @@ Generated from the module's variables and outputs with [terraform-docs](https://
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_bootstrap_admin_email"></a> [bootstrap\_admin\_email](#input\_bootstrap\_admin\_email) | Email of the first hub administrator. | `string` | n/a | yes |
+| <a name="input_adoptable_stacks"></a> [adoptable\_stacks](#input\_adoptable\_stacks) | Names of existing product stacks, created outside the hub and not named with stack\_name\_prefix, that the hub may adopt and then update and delete. IAM allows the hub on these names too. Requires hub\_version 0.1.0-rc.15 or later. | `list(string)` | `[]` | no |
 | <a name="input_artifact_version_override"></a> [artifact\_version\_override](#input\_artifact\_version\_override) | Leave empty unless Cloud Certainty support asks you to set it. | `string` | `""` | no |
 | <a name="input_catalogue_url"></a> [catalogue\_url](#input\_catalogue\_url) | The public product catalogue. Leave null for the default. | `string` | `null` | no |
 | <a name="input_cloudformation_role_arn"></a> [cloudformation\_role\_arn](#input\_cloudformation\_role\_arn) | Optional CloudFormation service role to deploy the hub's stack with. | `string` | `null` | no |
 | <a name="input_deploy_mode"></a> [deploy\_mode](#input\_deploy\_mode) | Full: the hub installs and updates products with its deployer role. ExportOnly: the hub only exports Terraform and CloudFormation. | `string` | `"Full"` | no |
-| <a name="input_hub_version"></a> [hub\_version](#input\_hub\_version) | Cloud Certainty Hub release to deploy (see https://cloudcertainty.com/hub/releases/). Selects the release's CloudFormation template. Each module release defaults to the Hub release it was tested with, so updating usually means raising the module version. | `string` | `"0.1.0-rc.14"` | no |
+| <a name="input_hub_version"></a> [hub\_version](#input\_hub\_version) | Cloud Certainty Hub release to deploy (see https://cloudcertainty.com/hub/releases/). Selects the release's CloudFormation template. Each module release defaults to the Hub release it was tested with, so updating usually means raising the module version. | `string` | `"0.1.0-rc.15"` | no |
 | <a name="input_identity_center_region"></a> [identity\_center\_region](#input\_identity\_center\_region) | Region to create IAM Identity Center in when there is none. Empty uses the provider's Region. | `string` | `""` | no |
 | <a name="input_identity_center_setup"></a> [identity\_center\_setup](#input\_identity\_center\_setup) | CreateIfMissing: use this account's IAM Identity Center or create one; UseExisting: fail when there is none; Disabled: leave it alone. The stack also creates the CloudCertaintyHubAdmins group with a user for bootstrap\_admin\_email. Nothing is ever deleted. | `string` | `"CreateIfMissing"` | no |
 | <a name="input_identity_provider"></a> [identity\_provider](#input\_identity\_provider) | How users sign in: IAMIdentityCenter, SAML, OIDC or CognitoOnly. IAMIdentityCenter and SAML need a second apply with saml\_metadata\_url. | `string` | `"IAMIdentityCenter"` | no |
@@ -174,7 +175,7 @@ Generated from the module's variables and outputs with [terraform-docs](https://
 
 ## Staying up to date
 
-Each module version `X.Y.Z` deploys Cloud Certainty Hub release `X.Y.Z` by default (module `0.1.0-rc.14` deploys Hub `0.1.0-rc.14`). A release is one CloudFormation template, so nothing changes until you update.
+Each module version `X.Y.Z` deploys Cloud Certainty Hub release `X.Y.Z` by default (module `0.1.0-rc.15` deploys Hub `0.1.0-rc.15`). A release is one CloudFormation template, so nothing changes until you update.
 
 Because the stack is tagged `cloudcertainty:managed-by = terraform`, **the Hub never updates itself**: its About page shows when a newer release exists and tells you which `hub_version` to set, but does not update the stack itself. You hear about new releases in several ways:
 
@@ -198,7 +199,7 @@ Because the stack is tagged `cloudcertainty:managed-by = terraform`, **the Hub n
         interval: weekly
       labels: ["dependencies", "cloudcertainty-hub"]
   ```
-  Pin an exact version (`version = "0.1.0-rc.14"`) so the bots can raise it.
+  Pin an exact version (`version = "0.1.0-rc.15"`) so the bots can raise it.
 
 ## Updating
 

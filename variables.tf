@@ -5,7 +5,7 @@
 variable "hub_version" {
   description = "Cloud Certainty Hub release to deploy (see https://cloudcertainty.com/hub/releases/). Selects the release's CloudFormation template. Each module release defaults to the Hub release it was tested with, so updating usually means raising the module version."
   type        = string
-  default     = "0.1.0-rc.14"
+  default     = "0.1.0-rc.15"
 
   validation {
     condition     = can(regex("^[0-9]+\\.[0-9]+\\.[0-9]+(-[A-Za-z0-9.]+)?$", var.hub_version))
@@ -138,6 +138,17 @@ variable "stack_name_prefix" {
   description = "The hub only manages product stacks whose names start with this prefix."
   type        = string
   default     = "cc-"
+}
+
+variable "adoptable_stacks" {
+  description = "Names of existing product stacks, created outside the hub and not named with stack_name_prefix, that the hub may adopt and then update and delete. IAM allows the hub on these names too. Requires hub_version 0.1.0-rc.15 or later."
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition     = alltrue([for n in var.adoptable_stacks : can(regex("^[A-Za-z][A-Za-z0-9-]{0,127}$", n))])
+    error_message = "adoptable_stacks must be CloudFormation stack names (a letter, then letters, digits and hyphens), with no wildcards."
+  }
 }
 
 variable "catalogue_url" {

@@ -5,6 +5,16 @@ tracks the Cloud Certainty Hub release it deploys by default: module version
 `X.Y.Z` deploys Hub `X.Y.Z` unless you set `hub_version`. Release candidates
 follow the same rule (module `0.1.0-rc.11` deploys Hub `0.1.0-rc.11`).
 
+## 0.1.0-rc.15
+
+- Deploys Cloud Certainty Hub 0.1.0-rc.15 by default: the Hub can adopt product stacks created
+  outside it, so it can update and delete them too
+  (https://cloudcertainty.com/hub/releases/0.1.0-rc.15/).
+- New input `adoptable_stacks` (default `[]`): names of existing product stacks, not named with
+  `stack_name_prefix`, that the Hub may adopt. IAM allows the Hub on these names too. Left out of
+  the stack's parameters when empty, so older Hub releases still deploy. It must not list
+  `stack_name`.
+
 ## 0.1.0-rc.14
 
 - Deploys Cloud Certainty Hub 0.1.0-rc.14 by default: product logos on the Products page and a

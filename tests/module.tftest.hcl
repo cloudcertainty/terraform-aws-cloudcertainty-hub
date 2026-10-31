@@ -15,7 +15,7 @@ run "defaults" {
     error_message = "unexpected default stack name: ${aws_cloudformation_stack.this.name}"
   }
   assert {
-    condition     = aws_cloudformation_stack.this.template_url == "https://cloudcertainty-hub-us-east-1.s3.us-east-1.amazonaws.com/0.1.0-rc.14/main.yaml"
+    condition     = aws_cloudformation_stack.this.template_url == "https://cloudcertainty-hub-us-east-1.s3.us-east-1.amazonaws.com/0.1.0-rc.15/main.yaml"
     error_message = "template URL must be the us-east-1 release bucket with the default hub_version: ${aws_cloudformation_stack.this.template_url}"
   }
   assert {
@@ -68,7 +68,11 @@ run "null_inputs_left_out" {
     error_message = "missing tag keys must be left out so the template defaults apply"
   }
   assert {
-    condition     = !contains(values(aws_cloudformation_stack.this.parameters), "0.1.0-rc.14")
+    condition     = !contains(keys(aws_cloudformation_stack.this.parameters), "AdoptableStacks")
+    error_message = "no adoptable_stacks must be left out, so older hub templates (without the parameter) still deploy"
+  }
+  assert {
+    condition     = !contains(values(aws_cloudformation_stack.this.parameters), "0.1.0-rc.15")
     error_message = "hub_version selects the template and must not be passed as a stack parameter"
   }
 }
@@ -275,6 +279,39 @@ run "stack_name_must_not_start_with_managed_prefix" {
 
   variables {
     stack_name = "cc-hub"
+  }
+
+  expect_failures = [aws_cloudformation_stack.this]
+}
+
+run "adoptable_stacks_mapped" {
+  command = plan
+
+  variables {
+    adoptable_stacks = ["sqlark", "bucketdeck-prod"]
+  }
+
+  assert {
+    condition     = aws_cloudformation_stack.this.parameters["AdoptableStacks"] == "sqlark,bucketdeck-prod"
+    error_message = "adoptable_stacks must be passed as a comma-separated AdoptableStacks"
+  }
+}
+
+run "adoptable_stacks_wildcard_rejected" {
+  command = plan
+
+  variables {
+    adoptable_stacks = ["sqlark-*"]
+  }
+
+  expect_failures = [var.adoptable_stacks]
+}
+
+run "adoptable_stacks_must_not_list_the_hub" {
+  command = plan
+
+  variables {
+    adoptable_stacks = ["cloudcertainty-hub"]
   }
 
   expect_failures = [aws_cloudformation_stack.this]

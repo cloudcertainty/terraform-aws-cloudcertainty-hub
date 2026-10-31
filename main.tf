@@ -23,6 +23,7 @@ locals {
     IdentityCenterRegion    = var.identity_center_region
     DeployMode              = var.deploy_mode
     StackNamePrefix         = var.stack_name_prefix
+    AdoptableStacks         = length(var.adoptable_stacks) > 0 ? join(",", var.adoptable_stacks) : null
     CatalogueUrl            = var.catalogue_url
     UpdateReminders         = var.update_reminders
     UpdateNotificationEmail = var.update_notification_email
@@ -65,6 +66,10 @@ resource "aws_cloudformation_stack" "this" {
     precondition {
       condition     = !startswith(var.stack_name, var.stack_name_prefix)
       error_message = "stack_name must not start with stack_name_prefix, so the hub can never manage its own stack."
+    }
+    precondition {
+      condition     = !contains(var.adoptable_stacks, var.stack_name)
+      error_message = "adoptable_stacks must not list stack_name: the hub never manages its own stack."
     }
   }
 }
