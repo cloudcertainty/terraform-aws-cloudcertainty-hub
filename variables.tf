@@ -5,7 +5,7 @@
 variable "hub_version" {
   description = "Cloud Certainty Hub release to deploy (see https://cloudcertainty.com/hub/releases/). Selects the release's CloudFormation template. Each module release defaults to the Hub release it was tested with, so updating usually means raising the module version."
   type        = string
-  default     = "0.1.0-rc.15"
+  default     = "0.1.0-rc.16"
 
   validation {
     condition     = can(regex("^[0-9]+\\.[0-9]+\\.[0-9]+(-[A-Za-z0-9.]+)?$", var.hub_version))
