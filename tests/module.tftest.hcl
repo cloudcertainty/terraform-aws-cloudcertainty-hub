@@ -15,7 +15,7 @@ run "defaults" {
     error_message = "unexpected default stack name: ${aws_cloudformation_stack.this.name}"
   }
   assert {
-    condition     = aws_cloudformation_stack.this.template_url == "https://cloudcertainty-hub-us-east-1.s3.us-east-1.amazonaws.com/0.1.0-rc.17/main.yaml"
+    condition     = aws_cloudformation_stack.this.template_url == "https://cloudcertainty-hub-us-east-1.s3.us-east-1.amazonaws.com/0.1.0-rc.18/main.yaml"
     error_message = "template URL must be the us-east-1 release bucket with the default hub_version: ${aws_cloudformation_stack.this.template_url}"
   }
   assert {
@@ -72,7 +72,7 @@ run "null_inputs_left_out" {
     error_message = "no adoptable_stacks must be left out, so older hub templates (without the parameter) still deploy"
   }
   assert {
-    condition     = !contains(values(aws_cloudformation_stack.this.parameters), "0.1.0-rc.17")
+    condition     = !contains(values(aws_cloudformation_stack.this.parameters), "0.1.0-rc.18")
     error_message = "hub_version selects the template and must not be passed as a stack parameter"
   }
 }
